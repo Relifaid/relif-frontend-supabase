@@ -17,7 +17,7 @@ node scripts/test-supabase-connection.js
 ### ✅ Step 3: Verify No Credentials in Git History
 ```bash
 # Check if any credentials are in your git history
-git log --oneline -p | grep -i "supabase\|eyJ"
+git log --oneline -p | grep -i "supabase_url\|supabase.*key"
 ```
 
 ## 🌐 Deployment Options
@@ -32,10 +32,10 @@ npm install -g vercel
 2. **Set Environment Variables in Vercel**
 ```bash
 vercel env add NEXT_PUBLIC_SUPABASE_URL
-# Enter: https://wnyfbpujsrpdfhdnemwu.supabase.co
+# Enter your Supabase URL from dashboard
 
 vercel env add NEXT_PUBLIC_SUPABASE_ANON_KEY
-# Enter: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndueWZicHVqc3JwZGZoZG5lbXd1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTAzNTcwMjQsImV4cCI6MjA2NTkzMzAyNH0.cFDSRwP3NEUqU0bKn84ct3FeB1voZh5xrrrK-HHcmlQ
+# Enter your Supabase Anon Key from dashboard
 ```
 
 3. **Deploy**
@@ -51,8 +51,8 @@ npm run build
 ```
 
 2. **In Netlify Dashboard, set environment variables:**
-   - `NEXT_PUBLIC_SUPABASE_URL` = `https://wnyfbpujsrpdfhdnemwu.supabase.co`
-   - `NEXT_PUBLIC_SUPABASE_ANON_KEY` = `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndueWZicHVqc3JwZGZoZG5lbXd1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTAzNTcwMjQsImV4cCI6MjA2NTkzMzAyNH0.cFDSRwP3NEUqU0bKn84ct3FeB1voZh5xrrrK-HHcmlQ`
+   - `NEXT_PUBLIC_SUPABASE_URL` = `your_supabase_url_from_dashboard`
+   - `NEXT_PUBLIC_SUPABASE_ANON_KEY` = `your_supabase_anon_key_from_dashboard`
 
 3. **Deploy via Git or drag-and-drop**
 
@@ -79,8 +79,8 @@ services:
     ports:
       - "3000:3000"
     environment:
-      - NEXT_PUBLIC_SUPABASE_URL=https://wnyfbpujsrpdfhdnemwu.supabase.co
-      - NEXT_PUBLIC_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndueWZicHVqc3JwZGZoZG5lbXd1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTAzNTcwMjQsImV4cCI6MjA2NTkzMzAyNH0.cFDSRwP3NEUqU0bKn84ct3FeB1voZh5xrrrK-HHcmlQ
+      - NEXT_PUBLIC_SUPABASE_URL=${SUPABASE_URL}
+      - NEXT_PUBLIC_SUPABASE_ANON_KEY=${SUPABASE_ANON_KEY}
 ```
 
 ## 🔧 Supabase Database Setup
@@ -90,7 +90,7 @@ services:
 Your database currently has RLS policy issues. Before going to production:
 
 1. **Access your Supabase Dashboard**
-   - Go to: https://supabase.com/dashboard/project/wnyfbpujsrpdfhdnemwu
+   - Go to: https://supabase.com/dashboard (find your project)
 
 2. **Fix RLS Policies**
    - Navigate to Authentication > Policies
