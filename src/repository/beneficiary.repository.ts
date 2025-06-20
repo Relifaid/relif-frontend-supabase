@@ -1,4 +1,3 @@
-import { client } from "@/lib/axios-client";
 import { apiClient } from "@/lib/supabase-client";
 import {
     BeneficiaryAllocationSchema,
@@ -73,14 +72,9 @@ export async function getBeneficiaryById(
             config: {}
         } as AxiosResponse<BeneficiarySchema>;
         
-    } catch (supabaseError) {
-        console.warn("Supabase getBeneficiaryById failed, using legacy:", supabaseError);
-        
-        // Fallback to legacy API
-        return client.request({
-            url: `${PREFIX}/${beneficiaryId}`,
-            method: "GET",
-        });
+    } catch (error) {
+        console.error("Failed to get beneficiary:", error);
+        throw error;
     }
 }
 
@@ -127,15 +121,9 @@ export async function updateBeneficiary(
             config: {}
         } as AxiosResponse;
         
-    } catch (supabaseError) {
-        console.warn("Supabase updateBeneficiary failed, using legacy:", supabaseError);
-        
-        // Fallback to legacy API
-        return client.request({
-            url: `${PREFIX}/${beneficiaryId}`,
-            method: "PUT",
-            data,
-        });
+    } catch (error) {
+        console.error("Failed to update beneficiary:", error);
+        throw error;
     }
 }
 
@@ -172,20 +160,9 @@ export async function generateProfileImageUploadLink(
             config: {}
         } as AxiosResponse<{ link: string }>;
         
-    } catch (supabaseError) {
-        console.warn("Supabase Storage generateProfileImageUploadLink failed, using legacy:", supabaseError);
-        
-        // Fallback to legacy API
-        return client.request({
-            url: `${PREFIX}/generate-profile-image-upload-link`,
-            method: "POST",
-            data: {
-                file_type: fileType,
-            },
-            headers: {
-                "Content-Type": "application/json",
-            },
-        });
+    } catch (error) {
+        console.error("Failed to generate upload link:", error);
+        throw error;
     }
 }
 
@@ -210,14 +187,9 @@ export async function deleteBeneficiary(beneficiaryId: string): Promise<AxiosRes
             config: {}
         } as AxiosResponse;
         
-    } catch (supabaseError) {
-        console.warn("Supabase deleteBeneficiary failed, using legacy:", supabaseError);
-        
-        // Fallback to legacy API
-        return client.request({
-            url: `${PREFIX}/${beneficiaryId}`,
-            method: "DELETE",
-        });
+    } catch (error) {
+        console.error("Failed to delete beneficiary:", error);
+        throw error;
     }
 }
 
@@ -252,18 +224,9 @@ export async function allocateBeneficiary(
             config: {}
         } as AxiosResponse;
         
-    } catch (supabaseError) {
-        console.warn("Supabase allocateBeneficiary failed, using legacy:", supabaseError);
-        
-        // Fallback to legacy API
-        return client.request({
-            url: `${PREFIX}/${beneficiaryId}/allocate`,
-            method: "POST",
-            data: {
-                housing_id: housingId,
-                room_id: roomId,
-            },
-        });
+    } catch (error) {
+        console.error("Failed to allocate beneficiary:", error);
+        throw error;
     }
 }
 
@@ -302,19 +265,9 @@ export async function reallocateBeneficiary(
             config: {}
         } as AxiosResponse;
         
-    } catch (supabaseError) {
-        console.warn("Supabase reallocateBeneficiary failed, using legacy:", supabaseError);
-        
-        // Fallback to legacy API
-        return client.request({
-            url: `${PREFIX}/${beneficiaryId}/reallocate`,
-            method: "POST",
-            data: {
-                housing_id: housingId,
-                room_id: roomId,
-                exit_reason: exitReason,
-            },
-        });
+    } catch (error) {
+        console.error("Failed to reallocate beneficiary:", error);
+        throw error;
     }
 }
 
@@ -369,14 +322,9 @@ export async function getDonationsByBeneficiaryId(
             config: {}
         } as AxiosResponse<{ count: number; data: Donation[] }>;
         
-    } catch (supabaseError) {
-        console.warn("Supabase getDonationsByBeneficiaryId failed, using legacy:", supabaseError);
-        
-        // Fallback to legacy API
-        return client.request({
-            url: `${PREFIX}/${beneficiaryId}/donations?offset=${offset}&limit=${limit}`,
-            method: "GET",
-        });
+    } catch (error) {
+        console.error("Failed to get donations:", error);
+        throw error;
     }
 }
 
@@ -417,15 +365,9 @@ export async function donateProductToBeneficiary(
         
         console.log("✅ Donation created successfully via Supabase");
         
-    } catch (supabaseError) {
-        console.warn("Supabase donateProductToBeneficiary failed, using legacy:", supabaseError);
-        
-        // Fallback to legacy API
-        return client.request({
-            url: `${PREFIX}/${beneficiaryId}/donations`,
-            method: "POST",
-            data,
-        });
+    } catch (error) {
+        console.error("Failed to create donation:", error);
+        throw error;
     }
 }
 
@@ -493,14 +435,9 @@ export async function getAllocationByBeneficiaryId(
             config: {}
         } as AxiosResponse<{ count: number; data: BeneficiaryAllocationSchema[] }>;
         
-    } catch (supabaseError) {
-        console.warn("Supabase getAllocationByBeneficiaryId failed, using legacy:", supabaseError);
-        
-        // Fallback to legacy API
-        return client.request({
-            url: `${PREFIX}/${beneficiaryId}/allocations?offset=${offset}&limit=${limit}`,
-            method: "GET",
-        });
+    } catch (error) {
+        console.error("Failed to get allocations:", error);
+        throw error;
     }
 }
 
@@ -533,17 +470,8 @@ export async function updateBeneficiaryStatus(
             config: {}
         } as AxiosResponse;
         
-    } catch (supabaseError) {
-        console.warn("Supabase updateBeneficiaryStatus failed, using legacy:", supabaseError);
-        
-        // Fallback to legacy API
-        return client.request({
-            url: `${PREFIX}/${beneficiaryId}/status`,
-            method: "PUT",
-            data: { status },
-            headers: {
-                "Content-Type": "application/json",
-            },
-        });
+    } catch (error) {
+        console.error("Failed to update beneficiary status:", error);
+        throw error;
     }
 }

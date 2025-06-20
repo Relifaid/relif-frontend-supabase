@@ -1,19 +1,15 @@
-import { client } from "@/lib/axios-client";
+import { apiClient } from "@/lib/supabase-client";
 
 const PREFIX = "password";
 
-export async function requestChange(email: string): Promise<void> {
-    return client.request({
-        url: `${PREFIX}/request-change`,
-        method: "POST",
-        data: { email },
-    });
+export async function requestPasswordChange(email: string): Promise<void> {
+    console.log("🔐 Sending password reset email via Supabase:", email);
+    await apiClient.resetPassword(email);
+    console.log("✅ Password reset email sent successfully via Supabase");
 }
 
-export async function updatePassword(code: string, newPassword: string): Promise<void> {
-    return client.request({
-        url: `${PREFIX}/${code}`,
-        method: "PUT",
-        data: { new_password: newPassword },
-    });
+export async function updateUserPassword(password: string): Promise<void> {
+    console.log("🔐 Recovering password via Supabase");
+    await apiClient.updatePassword(password);
+    console.log("✅ Password recovered successfully via Supabase");
 }

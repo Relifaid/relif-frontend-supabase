@@ -95,7 +95,7 @@ const Form = (): ReactNode => {
                 description: "You can now log in with your new account.",
                 variant: "success",
             });
-            window.location.href = "https://app.relifaid.org/";
+            router.push(`/${params.lang}/app/entry`);
         } catch (err: any) {
             const errorMessage =
                 err.message === "signup.emailAlreadyExists"

@@ -1,14 +1,10 @@
 import { supabase, SupabaseConfig } from '@/config/supabase'
-import { client as legacyClient } from './axios-client'
-import type { AxiosResponse } from 'axios'
 
 /**
- * Hybrid API Client - Supports both Supabase and Legacy endpoints
- * Gradually migrates endpoints from legacy to Supabase
+ * Pure Supabase API Client
  */
-class HybridApiClient {
+class SupabaseApiClient {
   private supabase = supabase
-  private legacyClient = legacyClient
   
   /**
    * Get current user session from Supabase
@@ -63,64 +59,6 @@ class HybridApiClient {
   }
 
   /**
-   * Fallback to legacy API (for endpoints not yet migrated)
-   */
-  async legacyRequest(endpoint: string, options: any = {}) {
-    return this.legacyClient.request({
-      url: endpoint,
-      ...options
-    })
-  }
-
-  /**
-   * Smart request - tries Supabase first, falls back to legacy
-   */
-  async smartRequest(endpoint: string, options: any = {}, preferSupabase = false) {
-    if (preferSupabase) {
-      try {
-        // Try Supabase Edge Function first
-        const functionName = this.mapEndpointToFunction(endpoint)
-        if (functionName) {
-          return await this.callEdgeFunction(functionName, {
-            method: options.method,
-            body: options.data,
-            headers: options.headers
-          })
-        }
-      } catch (error) {
-        console.warn(`Supabase request failed for ${endpoint}, falling back to legacy:`, error)
-      }
-    }
-
-    // Fallback to legacy
-    return this.legacyRequest(endpoint, options)
-  }
-
-  /**
-   * Map legacy endpoints to Supabase Edge Function names
-   */
-  private mapEndpointToFunction(endpoint: string): string | null {
-    const mapping: Record<string, string> = {
-      'auth/sign-in': 'auth',
-      'auth/sign-up': 'auth', 
-      'auth/me': 'auth',
-      'cases': 'cases',
-      'beneficiaries': 'beneficiaries',
-      'organizations': 'organizations',
-      'users': 'users',
-      'email': 'email'
-    }
-
-    for (const [pattern, func] of Object.entries(mapping)) {
-      if (endpoint.includes(pattern)) {
-        return func
-      }
-    }
-
-    return null
-  }
-
-  /**
    * Authentication methods using Supabase Auth
    */
   async signIn(email: string, password: string) {
@@ -147,6 +85,18 @@ class HybridApiClient {
   async signOut() {
     const { error } = await this.supabase.auth.signOut()
     if (error) throw error
+  }
+
+  async resetPassword(email: string) {
+    const { error } = await this.supabase.auth.resetPasswordForEmail(email, {
+      redirectTo: `${window.location.origin}/recover-password`,
+    });
+    if (error) throw error;
+  }
+
+  async updatePassword(password: string) {
+    const { error } = await this.supabase.auth.updateUser({ password });
+    if (error) throw error;
   }
 
   /**
@@ -186,5 +136,5 @@ class HybridApiClient {
 }
 
 // Export singleton instance
-export const apiClient = new HybridApiClient()
+export const apiClient = new SupabaseApiClient()
 export default apiClient 

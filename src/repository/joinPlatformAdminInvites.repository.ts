@@ -1,12 +1,14 @@
-import { client } from "@/lib/axios-client";
+import { apiClient } from "@/lib/supabase-client";
 import { AxiosResponse } from "axios";
 
-const PREFIX = "join-platform-admin-invites";
+async function toAxiosResponse<T>(data: T): Promise<AxiosResponse<T>> {
+    return { data, status: 200, statusText: 'OK', headers: {}, config: {} as any };
+}
 
-export async function createInvite(invitedEmail: string): Promise<AxiosResponse<void>> {
-    return client.request({
-        url: `${PREFIX}`,
-        method: "POST",
-        data: { invited_email: invitedEmail },
-    });
+export async function createAdminInvite(invitedEmail: string): Promise<AxiosResponse<void>> {
+    const { error } = await (await apiClient.query('platform_admin_invites'))
+        .insert({ email: invitedEmail, status: 'PENDING' });
+
+    if (error) throw error;
+    return toAxiosResponse(undefined);
 }

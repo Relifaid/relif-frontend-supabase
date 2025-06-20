@@ -1,29 +1,36 @@
-import { client } from "@/lib/axios-client";
+import { apiClient } from "@/lib/supabase-client";
 import { OrganizationDataAccessRequestSchema } from "@/types/organization.types";
 import { AxiosResponse } from "axios";
 
-const PREFIX = "organization-data-access-requests";
-
-export async function findRequests(): Promise<
-    AxiosResponse<OrganizationDataAccessRequestSchema[]>
-> {
-    return client.request({
-        url: `${PREFIX}`,
-        method: "GET",
-    });
+async function toAxiosResponse<T>(data: T): Promise<AxiosResponse<T>> {
+    return { data, status: 200, statusText: 'OK', headers: {}, config: {} as any };
 }
 
-export async function acceptRequest(requestId: string): Promise<void> {
-    return client.request({
-        url: `${PREFIX}/${requestId}/accept`,
-        method: "PUT",
-    });
+export async function findDataAccessRequests(
+    targetOrgId: string
+): Promise<AxiosResponse<OrganizationDataAccessRequestSchema[]>> {
+    const { data, error } = await (await apiClient.query('organization_data_access_requests'))
+        .select('*, requesting_organization:organizations!requesting_organization_id(*)')
+        .eq('target_organization_id', targetOrgId);
+        
+    if (error) throw error;
+    return toAxiosResponse(data || []);
 }
 
-export async function rejectRequest(requestId: string, rejectReason: string): Promise<void> {
-    return client.request({
-        url: `${PREFIX}/${requestId}/reject`,
-        method: "PUT",
-        data: { reject_reason: rejectReason },
-    });
+export async function acceptDataAccessRequest(requestId: string): Promise<AxiosResponse<void>> {
+    const { error } = await (await apiClient.query('organization_data_access_requests'))
+        .update({ status: 'GRANTED' })
+        .eq('id', requestId);
+        
+    if (error) throw error;
+    return toAxiosResponse(undefined);
+}
+
+export async function rejectDataAccessRequest(requestId: string): Promise<AxiosResponse<void>> {
+    const { error } = await (await apiClient.query('organization_data_access_requests'))
+        .update({ status: 'REJECTED' })
+        .eq('id', requestId);
+        
+    if (error) throw error;
+    return toAxiosResponse(undefined);
 }

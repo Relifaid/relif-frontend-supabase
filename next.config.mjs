@@ -34,6 +34,10 @@ const nextConfig = {
             },
         ];
     },
+    experimental: {
+        // Required for Supabase server-side auth to work
+        serverComponentsExternalPackages: ['@supabase/supabase-js'],
+    },
 };
 
 export default nextConfig;
