@@ -6,7 +6,8 @@
         "build": "next build --experimental-build-mode compile",
         "start:dev": "next dev",
         "start:prod": "next start",
-        "lint": "next lint"
+        "lint": "next lint",
+        "test:supabase": "node scripts/test-supabase-connection.js"
     },
     "dependencies": {
         "@formatjs/intl-localematcher": "^0.5.4",
@@ -24,6 +25,7 @@
         "@radix-ui/react-toast": "^1.2.1",
         "@radix-ui/react-tooltip": "^1.1.2",
         "@react-pdf/renderer": "^3.4.4",
+        "@supabase/supabase-js": "^2.50.0",
         "aws-amplify": "^6.6.2",
         "axios": "^1.7.2",
         "class-variance-authority": "^0.7.0",
@@ -58,6 +60,7 @@
         "@types/react-dom": "^18.3.7",
         "@typescript-eslint/eslint-plugin": "^7.0.1",
         "@typescript-eslint/parser": "^7.0.1",
+        "dotenv": "^16.5.0",
         "eslint": "^8",
         "eslint-config-airbnb": "^19.0.4",
         "eslint-config-next": "14.2.5",
