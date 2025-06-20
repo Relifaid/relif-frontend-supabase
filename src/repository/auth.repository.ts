@@ -6,20 +6,19 @@ import {
 } from "@/types/auth.types";
 import { UserSchema } from "@/types/user.types";
 import { AxiosResponse } from "axios";
+import { User, Session } from "@supabase/supabase-js";
 
 const PREFIX = "auth";
 
-export async function signIn(email: string, password: string): Promise<string> {
+export async function signIn(email: string, password: string): Promise<{user: User, session: Session}> {
     // Use Supabase authentication (no fallback)
     const { user, session } = await apiClient.signIn(email, password);
     
-    if (session?.access_token) {
-        // Store token for compatibility
-        localStorage.setItem("r_to", session.access_token);
-        return session.access_token;
-    }
-    
-    throw new Error("Authentication failed - no session token received");
+    if (!user || !session) throw new Error("Authentication failed - no user or session received");
+
+    // Store token for compatibility
+    localStorage.setItem("r_to", session.access_token);
+    return { user, session };
 }
 
 export async function signOut(): Promise<void> {

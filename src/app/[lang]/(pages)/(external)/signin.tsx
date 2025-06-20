@@ -31,12 +31,9 @@ const SignInForm = (): ReactNode => {
                 password: string;
             } = Object.fromEntries(formData);
 
-            const token = await signIn(data.email, data.password);
-
-            localStorage.setItem("r_to", token);
-
-            const { data: responseData } = await getMe();
-            saveToLocalStorage("r_ud", responseData);
+            const { user } = await signIn(data.email, data.password);
+            const responseData = await getMe();
+            saveToLocalStorage("r_ud", responseData.data);
 
             const LANGUAGES = {
                 english: "en",
@@ -44,22 +41,22 @@ const SignInForm = (): ReactNode => {
                 spanish: "es",
             };
 
-            if (responseData.platform_role === "RELIF_MEMBER") {
+            if (responseData.data.platform_role === "RELIF_MEMBER") {
                 router.push(
-                    `/${LANGUAGES[responseData.preferences.language as keyof typeof LANGUAGES] || "en"}/app/admin/organizations`
+                    `/${LANGUAGES[responseData.data.preferences.language as keyof typeof LANGUAGES] || "en"}/app/admin/organizations`
                 );
                 return;
             }
 
-            if (!responseData.organization_id) {
+            if (!responseData.data.organization_id) {
                 router.push(
-                    `/${LANGUAGES[responseData.preferences.language as keyof typeof LANGUAGES] || "en"}/app/entry`
+                    `/${LANGUAGES[responseData.data.preferences.language as keyof typeof LANGUAGES] || "en"}/app/entry`
                 );
                 return;
             }
 
             router.push(
-                `/${LANGUAGES[responseData.preferences.language as keyof typeof LANGUAGES] || "en"}/app/${responseData.organization_id}`
+                `/${LANGUAGES[responseData.data.preferences.language as keyof typeof LANGUAGES] || "en"}/app/${responseData.data.organization_id}`
             );
         } catch (err) {
             console.log(err);
